@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// Build site: regenerate essays.json + feed.xml + per-essay HTML pages
-// + inline essay cards into index.html so the site works without any client fetch.
+// Build site: regenerate essays.json + feed.xml + per-essay HTML pages,
+// with CSS INLINED into every page (so the site renders correctly even in
+// minimal in-app browsers that block external stylesheets).
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
@@ -9,9 +10,11 @@ const ESSAYS_DIR = path.join(ROOT, 'essays');
 const OUT_JSON = path.join(ESSAYS_DIR, 'essays.json');
 const OUT_FEED = path.join(ROOT, 'feed.xml');
 const POST_TEMPLATE = path.join(ESSAYS_DIR, 'post.template.html');
-const POST_OUT_DIR = path.join(ROOT, 'essays'); // /essays/<slug>/index.html
 const INDEX_PATH = path.join(ROOT, 'index.html');
-const SITE_URL = process.env.SITE_URL || 'https://example.com';
+const ABOUT_PATH = path.join(ROOT, 'about.html');
+const NOTFOUND_PATH = path.join(ROOT, '404.html');
+const CSS_PATH = path.join(ROOT, 'assets/style.css');
+const SITE_URL = process.env.SITE_URL || 'https://muhtarclaw.github.io/essays/';
 const SITE_TITLE = 'Essays';
 const SITE_DESC = 'Short essays on software, language, and the small things.';
 
@@ -46,8 +49,6 @@ function escapeXml(s) {
   }[c]));
 }
 
-// Inline markdown -> HTML. Used only at build time (server-side), so we can
-// be slightly more aggressive than the client version.
 function renderInline(s) {
   s = escapeHtml(s);
   s = s.replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`);
@@ -125,9 +126,11 @@ function readingTime(md) {
   return `${Math.max(1, Math.round(words / 220))} min read`;
 }
 
-function htmlEscape(s) { return escapeHtml(s); }
+const STYLE_TAG = (css) => `<style>${css}</style>`;
 
 (async () => {
+  const css = await fs.readFile(CSS_PATH, 'utf8');
+
   const files = (await fs.readdir(ESSAYS_DIR)).filter(f => f.endsWith('.md'));
   const essays = [];
   for (const f of files) {
@@ -140,12 +143,12 @@ function htmlEscape(s) { return escapeHtml(s); }
   }
   essays.sort((a, b) => b.date.localeCompare(a.date));
 
-  // 1) essays.json (kept for RSS readers / power users)
+  // 1) essays.json
   await fs.writeFile(OUT_JSON, JSON.stringify(essays, null, 2) + '\n');
 
   // 2) feed.xml
   const items = essays.map(e => {
-    const link = `${SITE_URL}/essays/${e.slug}/`;
+    const link = `${SITE_URL}essays/${e.slug}/`;
     return `    <item>
       <title>${escapeXml(e.title)}</title>
       <link>${link}</link>
@@ -175,35 +178,45 @@ ${items}
     const next = i < essays.length - 1 ? essays[i + 1] : null;
     const html = renderMarkdown(e.body || '');
     const htmlOut = tpl
-      .replace(/\{\{TITLE\}\}/g, htmlEscape(e.title))
-      .replace(/\{\{DATE_ISO\}\}/g, htmlEscape(e.date))
-      .replace(/\{\{DATE_FMT\}\}/g, htmlEscape(formatDate(e.date)))
-      .replace(/\{\{READING_TIME\}\}/g, htmlEscape(readingTime(e.body || '')))
+      .replace(/\{\{STYLE\}\}/g, STYLE_TAG(css))
+      .replace(/\{\{TITLE\}\}/g, escapeHtml(e.title))
+      .replace(/\{\{DATE_ISO\}\}/g, escapeHtml(e.date))
+      .replace(/\{\{DATE_FMT\}\}/g, escapeHtml(formatDate(e.date)))
+      .replace(/\{\{READING_TIME\}\}/g, escapeHtml(readingTime(e.body || '')))
       .replace(/\{\{BODY_HTML\}\}/g, html)
-      .replace(/\{\{PREV_LINK\}\}/g, prev ? `<a href="/essays/${prev.slug}/">← <span>${htmlEscape(prev.title)}</span></a>` : `<span class="empty"></span>`)
-      .replace(/\{\{NEXT_LINK\}\}/g, next ? `<a class="next" href="/essays/${next.slug}/"><span>${htmlEscape(next.title)}</span> →</a>` : `<span class="empty"></span>`);
-    const outDir = path.join(POST_OUT_DIR, e.slug);
+      .replace(/\{\{PREV_LINK\}\}/g, prev ? `<a href="/essays/${prev.slug}/">← <span class="title">${escapeHtml(prev.title)}</span></a>` : `<span class="empty"></span>`)
+      .replace(/\{\{NEXT_LINK\}\}/g, next ? `<a class="next" href="/essays/${next.slug}/"><span class="title">${escapeHtml(next.title)}</span> →</a>` : `<span class="empty"></span>`);
+    const outDir = path.join(ESSAYS_DIR, e.slug);
     await fs.mkdir(outDir, { recursive: true });
     await fs.writeFile(path.join(outDir, 'index.html'), htmlOut);
   }
 
-  // 4) Inlined essay cards on the index page
+  // 4) Inline cards into index.html
   const cards = essays.map(e => `
-        <a class="essay-card" href="/essays/${e.slug}/">
-          <div class="essay-meta">
-            <time datetime="${htmlEscape(e.date)}">${htmlEscape(formatDate(e.date))}</time>
-            <span class="dot"></span>
-            <span>${htmlEscape(readingTime(e.body || ''))}</span>
-          </div>
-          <h2>${htmlEscape(e.title)}</h2>
-          <p>${htmlEscape(e.excerpt || '')}</p>
-          ${e.tags && e.tags.length ? `<div class="essay-tags">${e.tags.map(t => `<span class="essay-tag">${htmlEscape(t)}</span>`).join('')}</div>` : ''}
-        </a>`).join('\n');
+      <a class="essay-card" href="/essays/${e.slug}/">
+        <div class="essay-meta">
+          <time datetime="${escapeHtml(e.date)}">${escapeHtml(formatDate(e.date))}</time>
+          <span class="dot"></span>
+          <span>${escapeHtml(readingTime(e.body || ''))}</span>
+        </div>
+        <h2>${escapeHtml(e.title)}</h2>
+        <p>${escapeHtml(e.excerpt || '')}</p>
+        ${e.tags && e.tags.length ? `<div class="essay-tags">${e.tags.map(t => `<span class="essay-tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+      </a>`).join('\n');
 
   const idx = await fs.readFile(INDEX_PATH, 'utf8');
   const updated = idx
-    .replace(/\{\{CARDS\}\}/g, cards.trim());
+    .replace(/\{\{STYLE\}\}/g, STYLE_TAG(css))
+    .replace(/\{\{CARDS\}\}/g, cards);
   await fs.writeFile(INDEX_PATH, updated);
+
+  // 5) Inline CSS into about + 404 too
+  for (const filePath of [ABOUT_PATH, NOTFOUND_PATH]) {
+    const html = await fs.readFile(filePath, 'utf8');
+    if (html.includes('{{STYLE}}')) {
+      await fs.writeFile(filePath, html.replace(/\{\{STYLE\}\}/g, STYLE_TAG(css)));
+    }
+  }
 
   console.log(`Built ${essays.length} essay(s):`);
   for (const e of essays) console.log(`  - ${e.date}  ${e.slug}  → /essays/${e.slug}/`);

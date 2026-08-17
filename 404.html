@@ -4,17 +4,412 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Not found — Essays</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/assets/style.css" />
+  <meta name="description" content="Page not found." />
+  <style>/* Inline-friendly CSS — uses only system fonts, no external dependencies.
+   Designed to render correctly even in minimal in-app browsers (e.g. Telegram).
+   The build script will inline this into every page. */
+
+:root {
+  --bg: #f7f5f0;
+  --bg-elev: #ffffff;
+  --bg-soft: #efece4;
+  --fg: #1a1a1a;
+  --fg-muted: #4a4a48;
+  --fg-faint: #8a8a86;
+  --border: #e3e0d6;
+  --border-strong: #c8c5b9;
+  --accent: #c2410c;
+  --accent-hover: #9a3309;
+  --accent-soft: #fce8db;
+  --code-bg: #f3f1ea;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.04);
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.06);
+  --radius: 12px;
+  --radius-sm: 6px;
+  --max: 720px;
+  --serif: ui-serif, Georgia, 'Times New Roman', serif;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+[data-theme="dark"] {
+  --bg: #0f0f0e;
+  --bg-elev: #18181a;
+  --bg-soft: #20201e;
+  --fg: #f0efea;
+  --fg-muted: #a9a8a3;
+  --fg-faint: #6a6a66;
+  --border: #2a2a28;
+  --border-strong: #40403c;
+  --accent: #fb923c;
+  --accent-hover: #fdba74;
+  --accent-soft: #2a1810;
+  --code-bg: #1c1c1a;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  --shadow: 0 1px 3px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body, h1, h2, h3, h4, p, ul, ol, figure, blockquote, pre, hr { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.65;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.skip-link {
+  position: absolute; left: -9999px; top: 0;
+  background: var(--accent); color: white; padding: 8px 12px;
+}
+.skip-link:focus { left: 0; z-index: 100; }
+
+/* HEADER */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky; top: 0; z-index: 50;
+}
+.site-header .wrap {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 18px; padding-bottom: 18px;
+}
+.brand {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  font-family: var(--serif);
+  font-weight: 600; font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+.brand-mark {
+  color: var(--accent);
+  font-weight: 700;
+}
+.brand-name { color: var(--fg); }
+.nav { display: flex; align-items: center; gap: 24px; font-size: 15px; }
+.nav a {
+  color: var(--fg-muted);
+  font-weight: 500;
+  transition: color .15s ease;
+}
+.nav a:hover { color: var(--fg); }
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border);
+  width: 36px; height: 36px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--fg-muted);
+}
+.theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+.icon-sun { display: none; }
+[data-theme="dark"] .icon-sun { display: block; }
+[data-theme="dark"] .icon-moon { display: none; }
+
+/* HERO */
+main { flex: 1; padding-top: 80px; padding-bottom: 96px; }
+.hero { margin-bottom: 80px; }
+.eyebrow {
+  display: inline-block;
+  font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 18px;
+  font-weight: 600;
+  padding: 4px 12px;
+  background: var(--accent-soft);
+  border-radius: 999px;
+}
+.hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(36px, 6.5vw, 56px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  margin-bottom: 20px;
+  color: var(--fg);
+}
+.lede {
+  color: var(--fg-muted);
+  font-size: 19px;
+  max-width: 560px;
+  line-height: 1.55;
+}
+
+/* ESSAY LIST */
+.essays { display: flex; flex-direction: column; }
+.essay-card {
+  display: block;
+  padding: 28px;
+  margin: 0 -28px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
+}
+.essay-card:hover {
+  background: var(--bg-elev);
+  border-color: var(--border);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.essay-meta {
+  display: flex; gap: 10px; align-items: center;
+  font-size: 13px; color: var(--fg-faint);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+.essay-meta .dot {
+  width: 3px; height: 3px;
+  background: var(--fg-faint);
+  border-radius: 50%;
+  display: inline-block;
+}
+.essay-card h2 {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin-bottom: 10px;
+  color: var(--fg);
+}
+.essay-card p {
+  color: var(--fg-muted);
+  font-size: 16px;
+  max-width: 580px;
+  line-height: 1.55;
+  margin-top: 6px;
+}
+.essay-tags { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
+.essay-tag {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--bg-soft);
+  color: var(--fg-muted);
+  font-weight: 500;
+  border: 1px solid var(--border);
+}
+
+/* ESSAY (post) PAGE */
+.post-header {
+  margin-bottom: 48px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.post-header h1 {
+  font-family: var(--serif);
+  font-size: clamp(34px, 5.5vw, 48px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  color: var(--fg);
+}
+.post-meta {
+  color: var(--fg-faint);
+  font-size: 14px;
+  display: flex; gap: 10px; align-items: center;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+.post-meta .dot {
+  width: 3px; height: 3px;
+  background: var(--fg-faint);
+  border-radius: 50%;
+  display: inline-block;
+}
+.post-content { font-size: 18px; line-height: 1.78; }
+.post-content > * + * { margin-top: 1.3em; }
+.post-content h2 {
+  font-family: var(--serif);
+  font-size: 30px; font-weight: 600; letter-spacing: -0.022em;
+  margin-top: 2.2em;
+  line-height: 1.2;
+}
+.post-content h3 {
+  font-family: var(--serif);
+  font-size: 23px; font-weight: 600; letter-spacing: -0.015em;
+  margin-top: 1.7em;
+}
+.post-content p, .post-content li { color: var(--fg); }
+.post-content a {
+  color: var(--accent);
+  border-bottom: 1.5px solid rgba(194, 65, 12, 0.35);
+  transition: border-color .15s ease;
+}
+.post-content a:hover { border-bottom-color: var(--accent); }
+.post-content blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 4px 0 4px 24px;
+  font-style: italic;
+  color: var(--fg-muted);
+  font-family: var(--serif);
+  font-size: 19px;
+}
+.post-content code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  background: var(--code-bg);
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: var(--accent);
+  font-weight: 500;
+}
+.post-content pre {
+  font-family: var(--mono);
+  background: var(--code-bg);
+  padding: 18px 22px;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  font-size: 14px;
+  line-height: 1.6;
+  border: 1px solid var(--border);
+}
+.post-content pre code {
+  background: transparent;
+  padding: 0;
+  color: var(--fg);
+  font-weight: 400;
+}
+.post-content ul, .post-content ol { padding-left: 1.6em; }
+.post-content ul li { list-style: disc; }
+.post-content ol li { list-style: decimal; }
+.post-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.5em auto;
+  width: 60px;
+}
+
+.post-nav {
+  margin-top: 72px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.post-nav a {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+  font-size: 14px;
+  transition: all .15s ease;
+}
+.post-nav a:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.post-nav a.next { text-align: right; align-items: flex-end; }
+.post-nav .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--fg-faint);
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+.post-nav .title {
+  color: var(--fg);
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 500;
+}
+.post-nav .empty { display: block; }
+
+/* ABOUT */
+.about-content { font-size: 18px; line-height: 1.78; }
+.about-content > * + * { margin-top: 1em; }
+.about-content p { color: var(--fg); }
+
+/* FOOTER */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 0;
+  color: var(--fg-faint);
+  font-size: 14px;
+}
+.site-footer .wrap {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px;
+}
+.site-footer a { color: var(--fg-muted); }
+.site-footer a:hover { color: var(--accent); }
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  main { padding-top: 48px; padding-bottom: 64px; }
+  .hero { margin-bottom: 48px; }
+  .nav { gap: 16px; }
+  .essay-card { padding: 22px 20px; margin: 0 -20px; }
+  .essay-card h2 { font-size: 22px; }
+  .post-nav { grid-template-columns: 1fr; }
+  .post-nav a.next { text-align: left; align-items: flex-start; }
+  .site-header .wrap { padding-top: 14px; padding-bottom: 14px; }
+  .brand { font-size: 19px; }
+  .hero h1 { font-size: 36px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+::selection { background: var(--accent); color: white; }
+</style>
 </head>
 <body>
-  <main class="wrap" style="padding-top: 96px; padding-bottom: 96px;">
-    <p class="eyebrow">404</p>
-    <h1 style="font-family:'Fraunces',Georgia,serif;font-size:48px;letter-spacing:-0.02em;margin-bottom:14px;">Page not found</h1>
-    <p style="color:var(--fg-muted);font-size:18px;margin-bottom:24px;">The essay you're looking for has wandered off.</p>
-    <a href="/" style="color:var(--accent);">← Back to essays</a>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/"><span class="brand-mark">e.</span><span class="brand-name">Essays</span></a>
+      <nav class="nav">
+        <a href="/">Essays</a>
+        <a href="/about.html">About</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="wrap">
+    <section class="hero">
+      <p class="eyebrow">404</p>
+      <h1>Not found.</h1>
+      <p class="lede">That page doesn't exist. Try the <a href="/">homepage</a> or the <a href="/feed.xml">RSS feed</a>.</p>
+    </section>
   </main>
+
+  <footer class="site-footer">
+    <div class="wrap"><p>© <span id="year"></span> · <a href="/feed.xml">RSS</a></p></div>
+  </footer>
+
+  <script src="/assets/main.js"></script>
 </body>
 </html>

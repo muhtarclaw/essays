@@ -24,7 +24,51 @@ html { -webkit-text-size-adjust: 100%; }
 body, h1, h2, h3, h4, p, ul, ol, figure, blockquote, pre, hr { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
 img { max-width: 100%; display: block; }
-a { color: inherit; text-decoration: none; }`;
+a { color: inherit; text-decoration: none; }
+:root { color-scheme: light dark; }`;
+
+// Dark theme overrides — only the tokens differ. Most elements use CSS
+// variables so they swap automatically. The small handful of inline colors
+// that don't use variables (e.g. SVG strokes, hardcoded code accent) are
+// flipped here.
+const DARK_OVERRIDES = `[data-theme="dark"] {
+  body { background:#0f0f0e !important; color:#f0efea !important; }
+  header { background:#0f0f0e !important; border-bottom-color:#2a2a28 !important; }
+  header a { color:#f0efea !important; }
+  header nav a { color:#a9a8a3 !important; }
+  main { background:#0f0f0e; }
+  footer { background:#0f0f0e !important; border-top-color:#2a2a28 !important; color:#6a6a66 !important; }
+  footer a { color:#a9a8a3 !important; }
+  .essay-card { border-color:transparent; }
+  .essay-card:hover { background:#18181a !important; border-color:#2a2a28 !important; }
+  .essay-card h2 { color:#f0efea !important; }
+  .essay-card p { color:#a9a8a3 !important; }
+  .essay-card .essay-meta { color:#6a6a66 !important; }
+  .essay-card .essay-meta .dot { background:#6a6a66 !important; }
+  .essay-card .essay-tag { background:#20201e !important; color:#a9a8a3 !important; border-color:#2a2a28 !important; }
+  .post-header { border-bottom-color:#2a2a28 !important; }
+  .post-header h1 { color:#f0efea !important; }
+  .post-meta { color:#6a6a66 !important; }
+  .post-meta .dot { background:#6a6a66 !important; }
+  .post-content p { color:#f0efea !important; }
+  .post-content li { color:#f0efea !important; }
+  .post-content a { color:#fb923c !important; border-bottom-color:rgba(251,146,60,0.35) !important; }
+  .post-content blockquote { color:#a9a8a3 !important; }
+  .post-content code { background:#1c1c1a !important; color:#fb923c !important; }
+  .post-content pre { background:#1c1c1a !important; border-color:#2a2a28 !important; }
+  .post-content pre code { color:#f0efea !important; }
+  .post-content hr { border-top-color:#2a2a28 !important; }
+  .post-nav { border-top-color:#2a2a28 !important; }
+  .post-nav a { background:#18181a !important; border-color:#2a2a28 !important; color:#f0efea !important; }
+  .post-nav .label { color:#6a6a66 !important; }
+  .about-content p { color:#f0efea !important; }
+  .lede { color:#a9a8a3 !important; }
+  .eyebrow { background:#2a1810 !important; color:#fb923c !important; }
+  h1 { color:#f0efea !important; }
+  .brand { color:#f0efea !important; }
+  .brand-mark { color:#fb923c !important; }
+  .theme-toggle { border-color:#2a2a28 !important; color:#a9a8a3 !important; }
+}`;
 
 const BODY_STYLE = `margin:0;font-family:Georgia,'Times New Roman',serif;background:#f7f5f0;color:#1a1a1a;line-height:1.7;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;`;
 
@@ -89,6 +133,7 @@ const MOBILE_BODY = `@media (max-width:600px) {
   header > div { padding-top:14px !important; padding-bottom:14px !important; }
   .brand { font-size:19px !important; }
   nav { gap:16px !important; }
+  .post-content h1 { font-size:32px !important; }
 }`;
 
 function parseFrontMatter(src) {
@@ -205,11 +250,11 @@ function readingTime(md) {
 
 function renderCard(e) {
   const tags = (e.tags && e.tags.length)
-    ? `<div style="${CARD_TAGS_STYLE}">${e.tags.map(t => `<span style="${CARD_TAG_STYLE}">${escapeHtml(t)}</span>`).join('')}</div>`
+    ? `<div style="${CARD_TAGS_STYLE}">${e.tags.map(t => `<span class="essay-tag" style="${CARD_TAG_STYLE}">${escapeHtml(t)}</span>`).join('')}</div>`
     : '';
   return `
       <a class="essay-card" href="/essays/${e.slug}/" style="${CARD_STYLE}">
-        <div style="${CARD_META_STYLE}">
+        <div class="essay-meta" style="${CARD_META_STYLE}">
           <time datetime="${escapeHtml(e.date)}">${escapeHtml(formatDate(e.date))}</time>
           <span style="${CARD_DOT_STYLE}"></span>
           <span>${escapeHtml(readingTime(e.body || ''))}</span>
@@ -224,13 +269,17 @@ function sharedHeader() {
   return `
   <header style="${HEADER_STYLE}">
     <div style="${HEADER_WRAP_STYLE}">
-      <a href="/" style="${BRAND_STYLE}">
-        <span style="${BRAND_MARK_STYLE}">e.</span>
+      <a class="brand" href="/" style="${BRAND_STYLE}">
+        <span class="brand-mark" style="${BRAND_MARK_STYLE}">e.</span>
         <span>Essays</span>
       </a>
       <nav style="${NAV_STYLE}">
         <a href="/" style="${NAV_LINK_STYLE}">Essays</a>
         <a href="/about.html" style="${NAV_LINK_STYLE}">About</a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle theme" style="background:transparent;border:1px solid #e3e0d6;width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:#4a4a48;padding:0;">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
       </nav>
     </div>
   </header>`;
@@ -254,8 +303,17 @@ function pageHead(title, description) {
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}" />
   <style>${RESET_STYLE}
+${DARK_OVERRIDES}
 ${MOBILE_BODY}</style>
   <link rel="alternate" type="application/rss+xml" title="Essays" href="/feed.xml" />
+  <script>
+    // Apply theme as early as possible to avoid flash
+    (function() {
+      var s = localStorage.getItem('essays-theme');
+      var p = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', s || p);
+    })();
+  </script>
 </head>
 <body style="${BODY_STYLE}">`;
 }
@@ -359,10 +417,10 @@ ${items}
   ${sharedHeader()}
   <main style="${MAIN_STYLE}${WRAP_STYLE}">
     <section style="${HERO_STYLE}">
-      <span style="${EYEBROW_STYLE}">About</span>
+      <span class="eyebrow" style="${EYEBROW_STYLE}">About</span>
       <h1 style="${H1_STYLE}">A quiet place on the internet.</h1>
     </section>
-    <div style="${CONTENT_STYLE}">
+    <div class="about-content" style="${CONTENT_STYLE}">
       <p style="${CONTENT_P_STYLE}">These are short essays — written slowly, edited more than written. Some are about software. Some are about language. Most are about the small, persistent questions that don't quite have answers.</p>
       <p style="${CONTENT_P_STYLE}">You can subscribe via <a href="/feed.xml" style="${CONTENT_A_STYLE}">RSS</a>. New essays land here when they're ready, not on a schedule.</p>
     </div>
@@ -375,7 +433,7 @@ ${items}
   ${sharedHeader()}
   <main style="${MAIN_STYLE}${WRAP_STYLE}">
     <section style="${HERO_STYLE}">
-      <span style="${EYEBROW_STYLE}">404</span>
+      <span class="eyebrow" style="${EYEBROW_STYLE}">404</span>
       <h1 style="${H1_STYLE}">Not found.</h1>
       <p style="${LEDE_STYLE}">That page doesn't exist. Try the <a href="/" style="${CONTENT_A_STYLE}">homepage</a> or the <a href="/feed.xml" style="${CONTENT_A_STYLE}">RSS feed</a>.</p>
     </section>

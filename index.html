@@ -6,15 +6,53 @@
   <title>Essays</title>
   <meta name="description" content="Short essays on software, language, and the small things." />
   <style>
-    /* Minimal base reset — only the bare essentials */
     *, *::before, *::after { box-sizing: border-box; }
     html { -webkit-text-size-adjust: 100%; }
     body, h1, h2, h3, h4, p, ul, ol, figure, blockquote, pre, hr { margin: 0; }
     ul, ol { padding: 0; list-style: none; }
     img { max-width: 100%; display: block; }
     a { color: inherit; text-decoration: none; }
+    :root { color-scheme: light dark; }
+    [data-theme="dark"] {
+      body { background:#0f0f0e !important; color:#f0efea !important; }
+      header { background:#0f0f0e !important; border-bottom-color:#2a2a28 !important; }
+      header a { color:#f0efea !important; }
+      header nav a { color:#a9a8a3 !important; }
+      footer { background:#0f0f0e !important; border-top-color:#2a2a28 !important; color:#6a6a66 !important; }
+      footer a { color:#a9a8a3 !important; }
+      .essay-card:hover { background:#18181a !important; border-color:#2a2a28 !important; }
+      .essay-card h2 { color:#f0efea !important; }
+      .essay-card p { color:#a9a8a3 !important; }
+      .essay-card .essay-meta { color:#6a6a66 !important; }
+      .essay-card .essay-meta .dot { background:#6a6a66 !important; }
+      .essay-card .essay-tag { background:#20201e !important; color:#a9a8a3 !important; border-color:#2a2a28 !important; }
+      .lede { color:#a9a8a3 !important; }
+      .eyebrow { background:#2a1810 !important; color:#fb923c !important; }
+      h1 { color:#f0efea !important; }
+      .brand { color:#f0efea !important; }
+      .brand-mark { color:#fb923c !important; }
+      .theme-toggle { border-color:#2a2a28 !important; color:#a9a8a3 !important; }
+    }
+    @media (max-width:600px) {
+      body { font-size:16px; }
+      main { padding-top:48px !important; padding-bottom:64px !important; }
+      section[style*="margin-bottom:80px"] { margin-bottom:48px !important; }
+      .essay-card { padding:22px 20px !important; margin:0 -20px !important; }
+      .essay-card h2 { font-size:22px !important; }
+      h1 { font-size:36px !important; }
+      header > div { padding-top:14px !important; padding-bottom:14px !important; }
+      .brand { font-size:19px !important; }
+      nav { gap:16px !important; }
+    }
   </style>
   <link rel="alternate" type="application/rss+xml" title="Essays" href="/feed.xml" />
+  <script>
+    (function() {
+      var s = localStorage.getItem('essays-theme');
+      var p = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', s || p);
+    })();
+  </script>
 </head>
 <body style="margin:0;font-family:Georgia,'Times New Roman',serif;background:#f7f5f0;color:#1a1a1a;line-height:1.7;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;">
 
@@ -23,13 +61,17 @@
   <!-- HEADER -->
   <header style="border-bottom:1px solid #e3e0d6;background:#f7f5f0;position:sticky;top:0;z-index:50;">
     <div style="max-width:720px;margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;">
-      <a href="/" style="display:inline-flex;align-items:baseline;gap:8px;font-weight:600;font-size:22px;letter-spacing:-0.02em;color:#1a1a1a;">
-        <span style="color:#c2410c;font-weight:700;">e.</span>
+      <a class="brand" href="/" style="display:inline-flex;align-items:baseline;gap:8px;font-weight:600;font-size:22px;letter-spacing:-0.02em;color:#1a1a1a;">
+        <span class="brand-mark" style="color:#c2410c;font-weight:700;">e.</span>
         <span>Essays</span>
       </a>
       <nav style="display:flex;align-items:center;gap:24px;font-size:15px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
         <a href="/" style="color:#4a4a48;font-weight:500;">Essays</a>
         <a href="/about.html" style="color:#4a4a48;font-weight:500;">About</a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle theme" style="background:transparent;border:1px solid #e3e0d6;width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:#4a4a48;padding:0;">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
       </nav>
     </div>
   </header>
@@ -38,44 +80,44 @@
 
     <!-- HERO -->
     <section style="margin-bottom:80px;">
-      <span style="display:inline-block;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#c2410c;margin-bottom:18px;font-weight:600;padding:4px 12px;background:#fce8db;border-radius:999px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">Short essays</span>
+      <span class="eyebrow" style="display:inline-block;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#c2410c;margin-bottom:18px;font-weight:600;padding:4px 12px;background:#fce8db;border-radius:999px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">Short essays</span>
       <h1 style="font-size:48px;font-weight:600;letter-spacing:-0.03em;line-height:1.08;margin-bottom:20px;color:#1a1a1a;">Notes on code, language, and the small things.</h1>
-      <p style="color:#4a4a48;font-size:19px;max-width:560px;line-height:1.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">A garden of short essays. Mostly software. Sometimes not.</p>
+      <p class="lede" style="color:#4a4a48;font-size:19px;max-width:560px;line-height:1.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">A garden of short essays. Mostly software. Sometimes not.</p>
     </section>
 
     <!-- ESSAY LIST -->
     <section style="display:flex;flex-direction:column;">
       <a class="essay-card" href="/essays/on-writing-short-things/" style="display:block;padding:28px;margin:0 -28px;border-radius:12px;border:1px solid transparent;transition:background-color .2s ease,border-color .2s ease,transform .2s ease;">
-        <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#8a8a86;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em;font-weight:500;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+        <div class="essay-meta" style="display:flex;gap:10px;align-items:center;font-size:13px;color:#8a8a86;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em;font-weight:500;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
           <time datetime="2026-08-15">August 15, 2026</time>
           <span style="width:3px;height:3px;background:#8a8a86;border-radius:50%;display:inline-block;"></span>
           <span>1 min read</span>
         </div>
         <h2 style="font-size:28px;font-weight:600;letter-spacing:-0.025em;line-height:1.2;margin-bottom:10px;color:#1a1a1a;">On Writing Short Things</h2>
         <p style="color:#4a4a48;font-size:16px;max-width:580px;line-height:1.55;margin-top:6px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">Why I keep coming back to the essay form — and the quiet discipline of stopping before you&#39;ve said too much.</p>
-        <div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;"><span style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">writing</span><span style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">essays</span></div>
+        <div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;"><span class="essay-tag" style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">writing</span><span class="essay-tag" style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">essays</span></div>
       </a>
 
       <a class="essay-card" href="/essays/the-quiet-stack/" style="display:block;padding:28px;margin:0 -28px;border-radius:12px;border:1px solid transparent;transition:background-color .2s ease,border-color .2s ease,transform .2s ease;">
-        <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#8a8a86;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em;font-weight:500;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+        <div class="essay-meta" style="display:flex;gap:10px;align-items:center;font-size:13px;color:#8a8a86;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em;font-weight:500;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
           <time datetime="2026-08-08">August 8, 2026</time>
           <span style="width:3px;height:3px;background:#8a8a86;border-radius:50%;display:inline-block;"></span>
           <span>1 min read</span>
         </div>
         <h2 style="font-size:28px;font-weight:600;letter-spacing:-0.025em;line-height:1.2;margin-bottom:10px;color:#1a1a1a;">The Quiet Stack</h2>
         <p style="color:#4a4a48;font-size:16px;max-width:580px;line-height:1.55;margin-top:6px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">A short defense of the boring stack — and why the best web pages are made of HTML, CSS, and a single JavaScript file.</p>
-        <div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;"><span style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">software</span><span style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">web</span><span style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">simplicity</span></div>
+        <div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;"><span class="essay-tag" style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">software</span><span class="essay-tag" style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">web</span><span class="essay-tag" style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">simplicity</span></div>
       </a>
 
       <a class="essay-card" href="/essays/what-we-mean-by-helpful/" style="display:block;padding:28px;margin:0 -28px;border-radius:12px;border:1px solid transparent;transition:background-color .2s ease,border-color .2s ease,transform .2s ease;">
-        <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#8a8a86;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em;font-weight:500;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+        <div class="essay-meta" style="display:flex;gap:10px;align-items:center;font-size:13px;color:#8a8a86;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em;font-weight:500;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
           <time datetime="2026-07-29">July 29, 2026</time>
           <span style="width:3px;height:3px;background:#8a8a86;border-radius:50%;display:inline-block;"></span>
           <span>2 min read</span>
         </div>
         <h2 style="font-size:28px;font-weight:600;letter-spacing:-0.025em;line-height:1.2;margin-bottom:10px;color:#1a1a1a;">What We Mean by Helpful</h2>
         <p style="color:#4a4a48;font-size:16px;max-width:580px;line-height:1.55;margin-top:6px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">Tools that try too hard to be helpful end up being less helpful. A note on restraint — in software, and elsewhere.</p>
-        <div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;"><span style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">tools</span><span style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">ai</span><span style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">craft</span></div>
+        <div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;"><span class="essay-tag" style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">tools</span><span class="essay-tag" style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">ai</span><span class="essay-tag" style="font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">craft</span></div>
       </a></section>
 
   </main>

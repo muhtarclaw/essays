@@ -1,0 +1,37 @@
+[
+  {
+    "slug": "on-writing-short-things",
+    "title": "On Writing Short Things",
+    "date": "2026-08-15",
+    "tags": [
+      "writing",
+      "essays"
+    ],
+    "excerpt": "Why I keep coming back to the essay form — and the quiet discipline of stopping before you've said too much.",
+    "body": "\nI keep coming back to short essays.\n\nNot because I can't write long ones. I can. The long form has its uses — a sustained argument, a slow build, the feeling of a room you settle into. But the long form rewards the writer, not the reader. It lets you hide. It lets you write past the point where the idea was finished and into the territory where you're just proving you can keep going.\n\nA short essay has no such comfort. If the idea is finished in 400 words, you stop at 400. The form is the discipline.\n\n## What the form asks\n\nA short essay asks three things of you:\n\n- **Have one idea.** Not a topic — an idea. A topic is a region; an idea is a place you stand in the region. You can stand in many places, but only one at a time.\n- **Defend it gently.** Argue without winning. The moment you start trying to convince someone, you've lost the shape. You're writing a debate, not an essay.\n- **Stop when it's done.** This is the hardest one. Most essays — mine included — would be better at 80% of their length.\n\n## Why it works\n\nShort essays scale. They respect the reader's afternoon. They travel well. A friend can send one in a message. You can read one before a meeting. You can read it twice in a row, which is the highest compliment I have for any piece of writing.\n\nAnd here's the secret: a short essay is harder than a long one. Every sentence has to carry weight. There is no filler because there is no room for filler. You learn to cut. You learn to cut again. Eventually you learn to write things that don't need cutting.\n\nThat's the craft. Not the sentence — the stop.\n"
+  },
+  {
+    "slug": "the-quiet-stack",
+    "title": "The Quiet Stack",
+    "date": "2026-08-08",
+    "tags": [
+      "software",
+      "web",
+      "simplicity"
+    ],
+    "excerpt": "A short defense of the boring stack — and why the best web pages are made of HTML, CSS, and a single JavaScript file.",
+    "body": "\nThe best websites I use are made of HTML, CSS, and a single JavaScript file.\n\nThat's not a hot take. It's a description. Most of what I read, buy, and return to is built that way — or close enough. The page loads. The page works. The page doesn't talk back.\n\n## What we replaced boredom with\n\nFor a while, we replaced boring tech with interesting tech. Frameworks, build pipelines, hydration, islands, server components. The reasons were good: we wanted better interactivity, faster iteration, safer refactors. And we got them.\n\nThen we kept going. We replaced interesting tech with complicated tech. We replaced the build pipeline with three build pipelines. We replaced \"this page works\" with \"this page works once the cache has warmed up.\"\n\n> Complexity is a tax on every future change. Every person who joins the team pays it. Every feature you don't ship, you paid it.\n\n## The boring alternative\n\nA static site. Markdown for content. A CSS file you can read. A JavaScript file that does one thing — usually fetch a manifest, render a list, wire up a theme toggle. No bundler. No `node_modules` to delete when something breaks. No `npm audit fix --force`.\n\nThe boring stack is not the simplest possible stack. It's the stack where the surface area matches the problem. For a personal site, that's a folder of files.\n\n## The hard part\n\nThe hard part of the boring stack isn't writing it. It's *not adding things*. Every time you want to \"just\" add a component library, ask: what does this buy me that a 30-line script doesn't? Usually nothing. Usually less.\n\nThe boring stack is a posture, not a default. You have to keep choosing it.\n"
+  },
+  {
+    "slug": "what-we-mean-by-helpful",
+    "title": "What We Mean by Helpful",
+    "date": "2026-07-29",
+    "tags": [
+      "tools",
+      "ai",
+      "craft"
+    ],
+    "excerpt": "Tools that try too hard to be helpful end up being less helpful. A note on restraint — in software, and elsewhere.",
+    "body": "\nA camera that \"helps\" by smoothing your face is less helpful than a camera that shows you your face. A map that \"helps\" by hiding streets you don't need is less helpful than a map that shows you the streets.\n\nThe word *helpful* gets used as a synonym for *opinionated*. They are not the same thing.\n\n## The shape of over-helpful\n\nOver-helpful tools have a tell: they add steps you didn't ask for.\n\n- \"Would you like me to also...\"\n- \"I noticed you might want to...\"\n- \"Here's a summary of what we discussed...\"\n\nEach of these is a small interruption. Each one is a guess the tool made about what you wanted. Sometimes the guess is right. Most of the time, you have to read past the guess to get back to what you were doing. The tool has inserted itself between you and your work.\n\n## What restraint looks like\n\nA helpful tool is one that does the thing you asked, then stops. If you ask for a sentence, it gives you a sentence. If you ask for an essay, it gives you an essay. The tool does not decide for you whether your sentence is too short, or whether your essay is too long.\n\nRestraint is not absence. A good tool has strong defaults. A good tool makes the obvious thing easy. But a good tool does not *guess* at the non-obvious things and then act on those guesses as if they were instructions.\n\n## A simple test\n\nWhen you finish using a tool, do you feel you did the work, or do you feel the tool did it?\n\nThat's the test. Not \"did the tool give me a good answer?\" — that's a different question, and a smaller one. The question is about ownership. Did you walk away with something you made, or with something that was made for you?\n\nThe tools I trust most are the ones that leave me with my hands still on the wheel.\n"
+  }
+]

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Idris — Essays</title>
+    <link>https://example.com</link>
+    <description>Short essays on software, language, and the small things.</description>
+    <language>en</language>
+    <item>
+      <title>On Writing Short Things</title>
+      <link>https://example.com/essays/post.html?slug=on-writing-short-things</link>
+      <guid>https://example.com/essays/post.html?slug=on-writing-short-things</guid>
+      <pubDate>Sat, 15 Aug 2026 00:00:00 GMT</pubDate>
+      <description>Why I keep coming back to the essay form — and the quiet discipline of stopping before you&apos;ve said too much.</description>
+    </item>
+    <item>
+      <title>The Quiet Stack</title>
+      <link>https://example.com/essays/post.html?slug=the-quiet-stack</link>
+      <guid>https://example.com/essays/post.html?slug=the-quiet-stack</guid>
+      <pubDate>Sat, 08 Aug 2026 00:00:00 GMT</pubDate>
+      <description>A short defense of the boring stack — and why the best web pages are made of HTML, CSS, and a single JavaScript file.</description>
+    </item>
+    <item>
+      <title>What We Mean by Helpful</title>
+      <link>https://example.com/essays/post.html?slug=what-we-mean-by-helpful</link>
+      <guid>https://example.com/essays/post.html?slug=what-we-mean-by-helpful</guid>
+      <pubDate>Wed, 29 Jul 2026 00:00:00 GMT</pubDate>
+      <description>Tools that try too hard to be helpful end up being less helpful. A note on restraint — in software, and elsewhere.</description>
+    </item>
+  </channel>
+</rss>

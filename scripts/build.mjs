@@ -9,7 +9,7 @@ const ESSAYS_DIR = path.join(ROOT, 'essays');
 const OUT_JSON = path.join(ESSAYS_DIR, 'essays.json');
 const OUT_FEED = path.join(ROOT, 'feed.xml');
 const SITE_URL = process.env.SITE_URL || 'https://example.com';
-const SITE_TITLE = 'Idris — Essays';
+const SITE_TITLE = 'Essays';
 const SITE_DESC = 'Short essays on software, language, and the small things.';
 
 function parseFrontMatter(src) {

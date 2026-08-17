@@ -1,4 +1,4 @@
-# Idris — Essays
+# Essays
 
 A small, modern site for short essays. Static, dependency-free, hosted on GitHub Pages.
 

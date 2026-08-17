@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Build essays.json + feed.xml from essays/*.md front matter.
-// Run: node scripts/build.mjs
+// Build site: regenerate essays.json + feed.xml + per-essay HTML pages
+// + inline essay cards into index.html so the site works without any client fetch.
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
@@ -8,6 +8,9 @@ const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 const ESSAYS_DIR = path.join(ROOT, 'essays');
 const OUT_JSON = path.join(ESSAYS_DIR, 'essays.json');
 const OUT_FEED = path.join(ROOT, 'feed.xml');
+const POST_TEMPLATE = path.join(ESSAYS_DIR, 'post.template.html');
+const POST_OUT_DIR = path.join(ROOT, 'essays'); // /essays/<slug>/index.html
+const INDEX_PATH = path.join(ROOT, 'index.html');
 const SITE_URL = process.env.SITE_URL || 'https://example.com';
 const SITE_TITLE = 'Essays';
 const SITE_DESC = 'Short essays on software, language, and the small things.';
@@ -31,11 +34,98 @@ function parseFrontMatter(src) {
   return { meta: fm, body: m[2] };
 }
 
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
 function escapeXml(s) {
   return s.replace(/[&<>'"]/g, c => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&apos;', '"': '&quot;'
   }[c]));
 }
+
+// Inline markdown -> HTML. Used only at build time (server-side), so we can
+// be slightly more aggressive than the client version.
+function renderInline(s) {
+  s = escapeHtml(s);
+  s = s.replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`);
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, t, u) => {
+    const safe = /^(https?:\/\/|mailto:|\/|#)/.test(u) ? u : '#';
+    const ext = /^https?:/.test(safe);
+    return `<a href="${safe}"${ext ? ' rel="noopener"' : ''}>${t}</a>`;
+  });
+  return s;
+}
+
+function renderMarkdown(md) {
+  const lines = md.replace(/\r\n/g, '\n').split('\n');
+  const out = [];
+  let i = 0;
+  while (i < lines.length) {
+    const L = lines[i];
+    if (!L.trim()) { i++; continue; }
+    if (/^---+$/.test(L.trim())) { out.push('<hr/>'); i++; continue; }
+    const h = L.match(/^(#{1,4})\s+(.+)/);
+    if (h) { out.push(`<h${h[1].length}>${renderInline(h[2])}</h${h[1].length}>`); i++; continue; }
+    if (L.startsWith('```')) {
+      const lang = L.slice(3).trim(); i++;
+      const buf = [];
+      while (i < lines.length && !lines[i].startsWith('```')) { buf.push(lines[i]); i++; }
+      i++;
+      const cls = lang ? ` class="lang-${escapeHtml(lang)}"` : '';
+      out.push(`<pre><code${cls}>${escapeHtml(buf.join('\n'))}</code></pre>`);
+      continue;
+    }
+    if (L.startsWith('> ')) {
+      const buf = [];
+      while (i < lines.length && lines[i].startsWith('> ')) { buf.push(lines[i].slice(2)); i++; }
+      out.push(`<blockquote>${renderInline(buf.join(' '))}</blockquote>`);
+      continue;
+    }
+    if (/^[-*]\s+/.test(L)) {
+      const buf = [];
+      while (i < lines.length && /^[-*]\s+/.test(lines[i])) {
+        buf.push(`<li>${renderInline(lines[i].replace(/^[-*]\s+/, ''))}</li>`);
+        i++;
+      }
+      out.push(`<ul>${buf.join('')}</ul>`);
+      continue;
+    }
+    if (/^\d+\.\s+/.test(L)) {
+      const buf = [];
+      while (i < lines.length && /^\d+\.\s+/.test(lines[i])) {
+        buf.push(`<li>${renderInline(lines[i].replace(/^\d+\.\s+/, ''))}</li>`);
+        i++;
+      }
+      out.push(`<ol>${buf.join('')}</ol>`);
+      continue;
+    }
+    const buf = [];
+    while (i < lines.length && lines[i].trim() &&
+      !/^(#{1,4}\s|>|```|[-*]\s|\d+\.\s|---+$)/.test(lines[i])) {
+      buf.push(lines[i]); i++;
+    }
+    out.push(`<p>${renderInline(buf.join(' '))}</p>`);
+  }
+  return out.join('\n');
+}
+
+function formatDate(iso) {
+  try {
+    return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  } catch { return iso; }
+}
+
+function readingTime(md) {
+  const words = (md.match(/\b\w+\b/g) || []).length;
+  return `${Math.max(1, Math.round(words / 220))} min read`;
+}
+
+function htmlEscape(s) { return escapeHtml(s); }
 
 (async () => {
   const files = (await fs.readdir(ESSAYS_DIR)).filter(f => f.endsWith('.md'));
@@ -50,10 +140,12 @@ function escapeXml(s) {
   }
   essays.sort((a, b) => b.date.localeCompare(a.date));
 
+  // 1) essays.json (kept for RSS readers / power users)
   await fs.writeFile(OUT_JSON, JSON.stringify(essays, null, 2) + '\n');
 
+  // 2) feed.xml
   const items = essays.map(e => {
-    const link = `${SITE_URL}/essays/post.html?slug=${encodeURIComponent(e.slug)}`;
+    const link = `${SITE_URL}/essays/${e.slug}/`;
     return `    <item>
       <title>${escapeXml(e.title)}</title>
       <link>${link}</link>
@@ -62,7 +154,6 @@ function escapeXml(s) {
       <description>${escapeXml(e.excerpt || '')}</description>
     </item>`;
   }).join('\n');
-
   const feed = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
@@ -76,6 +167,44 @@ ${items}
 `;
   await fs.writeFile(OUT_FEED, feed);
 
+  // 3) Per-essay pages at /essays/<slug>/index.html
+  const tpl = await fs.readFile(POST_TEMPLATE, 'utf8');
+  for (let i = 0; i < essays.length; i++) {
+    const e = essays[i];
+    const prev = i > 0 ? essays[i - 1] : null;
+    const next = i < essays.length - 1 ? essays[i + 1] : null;
+    const html = renderMarkdown(e.body || '');
+    const htmlOut = tpl
+      .replace(/\{\{TITLE\}\}/g, htmlEscape(e.title))
+      .replace(/\{\{DATE_ISO\}\}/g, htmlEscape(e.date))
+      .replace(/\{\{DATE_FMT\}\}/g, htmlEscape(formatDate(e.date)))
+      .replace(/\{\{READING_TIME\}\}/g, htmlEscape(readingTime(e.body || '')))
+      .replace(/\{\{BODY_HTML\}\}/g, html)
+      .replace(/\{\{PREV_LINK\}\}/g, prev ? `<a href="/essays/${prev.slug}/">← <span>${htmlEscape(prev.title)}</span></a>` : `<span class="empty"></span>`)
+      .replace(/\{\{NEXT_LINK\}\}/g, next ? `<a class="next" href="/essays/${next.slug}/"><span>${htmlEscape(next.title)}</span> →</a>` : `<span class="empty"></span>`);
+    const outDir = path.join(POST_OUT_DIR, e.slug);
+    await fs.mkdir(outDir, { recursive: true });
+    await fs.writeFile(path.join(outDir, 'index.html'), htmlOut);
+  }
+
+  // 4) Inlined essay cards on the index page
+  const cards = essays.map(e => `
+        <a class="essay-card" href="/essays/${e.slug}/">
+          <div class="essay-meta">
+            <time datetime="${htmlEscape(e.date)}">${htmlEscape(formatDate(e.date))}</time>
+            <span class="dot"></span>
+            <span>${htmlEscape(readingTime(e.body || ''))}</span>
+          </div>
+          <h2>${htmlEscape(e.title)}</h2>
+          <p>${htmlEscape(e.excerpt || '')}</p>
+          ${e.tags && e.tags.length ? `<div class="essay-tags">${e.tags.map(t => `<span class="essay-tag">${htmlEscape(t)}</span>`).join('')}</div>` : ''}
+        </a>`).join('\n');
+
+  const idx = await fs.readFile(INDEX_PATH, 'utf8');
+  const updated = idx
+    .replace(/\{\{CARDS\}\}/g, cards.trim());
+  await fs.writeFile(INDEX_PATH, updated);
+
   console.log(`Built ${essays.length} essay(s):`);
-  for (const e of essays) console.log(`  - ${e.date}  ${e.slug}`);
+  for (const e of essays) console.log(`  - ${e.date}  ${e.slug}  → /essays/${e.slug}/`);
 })().catch(err => { console.error(err); process.exit(1); });

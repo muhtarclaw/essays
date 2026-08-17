@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Quiet Stack — Essays</title>
+  <meta name="description" content="An essay." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/"><span class="brand-mark">e.</span><span class="brand-name">Essays</span></a>
+      <nav class="nav">
+        <a href="/">Essays</a>
+        <a href="/about.html">About</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="wrap">
+    <article>
+      <header class="post-header">
+        <h1>The Quiet Stack</h1>
+        <div class="post-meta">
+          <time datetime="2026-08-08">August 8, 2026</time>
+          <span class="dot"></span>
+          <span>1 min read</span>
+        </div>
+      </header>
+      <div class="post-content"><p>The best websites I use are made of HTML, CSS, and a single JavaScript file.</p>
+<p>That&#39;s not a hot take. It&#39;s a description. Most of what I read, buy, and return to is built that way — or close enough. The page loads. The page works. The page doesn&#39;t talk back.</p>
+<h2>What we replaced boredom with</h2>
+<p>For a while, we replaced boring tech with interesting tech. Frameworks, build pipelines, hydration, islands, server components. The reasons were good: we wanted better interactivity, faster iteration, safer refactors. And we got them.</p>
+<p>Then we kept going. We replaced interesting tech with complicated tech. We replaced the build pipeline with three build pipelines. We replaced &quot;this page works&quot; with &quot;this page works once the cache has warmed up.&quot;</p>
+<blockquote>Complexity is a tax on every future change. Every person who joins the team pays it. Every feature you don&#39;t ship, you paid it.</blockquote>
+<h2>The boring alternative</h2>
+<p>A static site. Markdown for content. A CSS file you can read. A JavaScript file that does one thing — usually fetch a manifest, render a list, wire up a theme toggle. No bundler. No <code>node_modules</code> to delete when something breaks. No <code>npm audit fix --force</code>.</p>
+<p>The boring stack is not the simplest possible stack. It&#39;s the stack where the surface area matches the problem. For a personal site, that&#39;s a folder of files.</p>
+<h2>The hard part</h2>
+<p>The hard part of the boring stack isn&#39;t writing it. It&#39;s <em>not adding things</em>. Every time you want to &quot;just&quot; add a component library, ask: what does this buy me that a 30-line script doesn&#39;t? Usually nothing. Usually less.</p>
+<p>The boring stack is a posture, not a default. You have to keep choosing it.</p></div>
+      <nav class="post-nav">
+        <a href="/essays/on-writing-short-things/">← <span>On Writing Short Things</span></a>
+        <a class="next" href="/essays/what-we-mean-by-helpful/"><span>What We Mean by Helpful</span> →</a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap"><p>© <span id="year"></span> · <a href="/feed.xml">RSS</a></p></div>
+  </footer>
+
+  <script src="/assets/main.js"></script>
+</body>
+</html>

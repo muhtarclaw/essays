@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-// Build site: regenerate essays.json + feed.xml + per-essay HTML pages,
-// with CSS INLINED into every page (so the site renders correctly even in
-// minimal in-app browsers that block external stylesheets).
+// Build site: regenerate essays.json + feed.xml + per-essay HTML pages.
+// All styling is INLINE on individual elements — no external CSS, no <style>
+// blocks (just a tiny reset). Works in any browser, including stripped-down
+// in-app previews.
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
@@ -13,10 +14,82 @@ const POST_TEMPLATE = path.join(ESSAYS_DIR, 'post.template.html');
 const INDEX_PATH = path.join(ROOT, 'index.html');
 const ABOUT_PATH = path.join(ROOT, 'about.html');
 const NOTFOUND_PATH = path.join(ROOT, '404.html');
-const CSS_PATH = path.join(ROOT, 'assets/style.css');
 const SITE_URL = process.env.SITE_URL || 'https://muhtarclaw.github.io/essays/';
 const SITE_TITLE = 'Essays';
 const SITE_DESC = 'Short essays on software, language, and the small things.';
+
+// Shared inline styles
+const RESET_STYLE = `*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body, h1, h2, h3, h4, p, ul, ol, figure, blockquote, pre, hr { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }`;
+
+const BODY_STYLE = `margin:0;font-family:Georgia,'Times New Roman',serif;background:#f7f5f0;color:#1a1a1a;line-height:1.7;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;`;
+
+const SANS_STYLE = `font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;`;
+
+const WRAP_STYLE = `max-width:720px;margin:0 auto;padding:0 24px;width:100%;`;
+
+const HEADER_STYLE = `border-bottom:1px solid #e3e0d6;background:#f7f5f0;position:sticky;top:0;z-index:50;`;
+const HEADER_WRAP_STYLE = `${WRAP_STYLE}padding-top:18px;padding-bottom:18px;display:flex;align-items:center;justify-content:space-between;`;
+const BRAND_STYLE = `display:inline-flex;align-items:baseline;gap:8px;font-weight:600;font-size:22px;letter-spacing:-0.02em;color:#1a1a1a;`;
+const BRAND_MARK_STYLE = `color:#c2410c;font-weight:700;`;
+const NAV_STYLE = `display:flex;align-items:center;gap:24px;font-size:15px;${SANS_STYLE}`;
+const NAV_LINK_STYLE = `color:#4a4a48;font-weight:500;`;
+
+const MAIN_STYLE = `flex:1;padding:80px 24px 96px;`;
+
+const HERO_STYLE = `margin-bottom:80px;`;
+const EYEBROW_STYLE = `display:inline-block;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#c2410c;margin-bottom:18px;font-weight:600;padding:4px 12px;background:#fce8db;border-radius:999px;${SANS_STYLE}`;
+const H1_STYLE = `font-size:48px;font-weight:600;letter-spacing:-0.03em;line-height:1.08;margin-bottom:20px;color:#1a1a1a;`;
+const LEDE_STYLE = `color:#4a4a48;font-size:19px;max-width:560px;line-height:1.55;${SANS_STYLE}`;
+
+const ESSAYS_LIST_STYLE = `display:flex;flex-direction:column;`;
+const CARD_STYLE = `display:block;padding:28px;margin:0 -28px;border-radius:12px;border:1px solid transparent;transition:background-color .2s ease,border-color .2s ease,transform .2s ease;`;
+const CARD_META_STYLE = `display:flex;gap:10px;align-items:center;font-size:13px;color:#8a8a86;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em;font-weight:500;${SANS_STYLE}`;
+const CARD_DOT_STYLE = `width:3px;height:3px;background:#8a8a86;border-radius:50%;display:inline-block;`;
+const CARD_H2_STYLE = `font-size:28px;font-weight:600;letter-spacing:-0.025em;line-height:1.2;margin-bottom:10px;color:#1a1a1a;`;
+const CARD_P_STYLE = `color:#4a4a48;font-size:16px;max-width:580px;line-height:1.55;margin-top:6px;${SANS_STYLE}`;
+const CARD_TAGS_STYLE = `display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;`;
+const CARD_TAG_STYLE = `font-size:12px;padding:3px 10px;border-radius:999px;background:#efece4;color:#4a4a48;font-weight:500;border:1px solid #e3e0d6;${SANS_STYLE}`;
+
+const FOOTER_STYLE = `border-top:1px solid #e3e0d6;padding:32px 24px;color:#8a8a86;font-size:14px;${SANS_STYLE}`;
+const FOOTER_WRAP_STYLE = `max-width:720px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;`;
+const FOOTER_LINK_STYLE = `color:#4a4a48;`;
+
+const POST_HEADER_STYLE = `margin-bottom:48px;padding-bottom:24px;border-bottom:1px solid #e3e0d6;`;
+const POST_H1_STYLE = `font-size:46px;font-weight:600;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;color:#1a1a1a;`;
+const POST_META_STYLE = `color:#8a8a86;font-size:14px;display:flex;gap:10px;align-items:center;text-transform:uppercase;letter-spacing:0.06em;font-weight:500;${SANS_STYLE}`;
+
+const CONTENT_STYLE = `font-size:18px;line-height:1.78;${SANS_STYLE}`;
+const CONTENT_H2_STYLE = `font-family:Georgia,'Times New Roman',serif;font-size:30px;font-weight:600;letter-spacing:-0.022em;margin-top:2.2em;line-height:1.2;`;
+const CONTENT_H3_STYLE = `font-family:Georgia,'Times New Roman',serif;font-size:23px;font-weight:600;letter-spacing:-0.015em;margin-top:1.7em;`;
+const CONTENT_P_STYLE = `color:#1a1a1a;margin-top:1.3em;`;
+const CONTENT_A_STYLE = `color:#c2410c;border-bottom:1.5px solid rgba(194,65,12,0.35);`;
+const CONTENT_LI_STYLE = `color:#1a1a1a;margin-top:0.5em;`;
+const CONTENT_UL_STYLE = `padding-left:1.6em;margin-top:1.3em;`;
+const CONTENT_OL_STYLE = `padding-left:1.6em;margin-top:1.3em;`;
+const CONTENT_BQ_STYLE = `border-left:3px solid #c2410c;padding:4px 0 4px 24px;font-style:italic;color:#4a4a48;font-family:Georgia,'Times New Roman',serif;font-size:19px;margin-top:1.3em;`;
+const CONTENT_CODE_STYLE = `font-family:'SF Mono',Menlo,Consolas,monospace;font-size:0.86em;background:#f3f1ea;padding:2px 7px;border-radius:4px;color:#c2410c;font-weight:500;`;
+const CONTENT_PRE_STYLE = `font-family:'SF Mono',Menlo,Consolas,monospace;background:#f3f1ea;padding:18px 22px;border-radius:12px;overflow-x:auto;font-size:14px;line-height:1.6;border:1px solid #e3e0d6;margin-top:1.3em;`;
+const CONTENT_HR_STYLE = `border:none;border-top:1px solid #e3e0d6;margin:2.5em auto;width:60px;`;
+
+// Mobile overrides (window.innerWidth <= 600) — applied via inline mediaQuery
+const MOBILE_BODY = `@media (max-width:600px) {
+  body { font-size:16px; }
+  main { padding-top:48px !important; padding-bottom:64px !important; }
+  section[style*="margin-bottom:80px"] { margin-bottom:48px !important; }
+  .essay-card { padding:22px 20px !important; margin:0 -20px !important; }
+  .essay-card h2 { font-size:22px !important; }
+  h1 { font-size:36px !important; }
+  .post-nav { grid-template-columns:1fr !important; }
+  .post-nav a.next { text-align:left !important; align-items:flex-start !important; }
+  header > div { padding-top:14px !important; padding-bottom:14px !important; }
+  .brand { font-size:19px !important; }
+  nav { gap:16px !important; }
+}`;
 
 function parseFrontMatter(src) {
   const m = src.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
@@ -51,13 +124,13 @@ function escapeXml(s) {
 
 function renderInline(s) {
   s = escapeHtml(s);
-  s = s.replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`);
+  s = s.replace(/`([^`]+)`/g, (_, c) => `<code style="${CONTENT_CODE_STYLE}">${c}</code>`);
   s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
   s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, t, u) => {
     const safe = /^(https?:\/\/|mailto:|\/|#)/.test(u) ? u : '#';
     const ext = /^https?:/.test(safe);
-    return `<a href="${safe}"${ext ? ' rel="noopener"' : ''}>${t}</a>`;
+    return `<a href="${escapeHtml(safe)}" style="${CONTENT_A_STYLE}"${ext ? ' rel="noopener"' : ''}>${escapeHtml(t)}</a>`;
   });
   return s;
 }
@@ -69,40 +142,44 @@ function renderMarkdown(md) {
   while (i < lines.length) {
     const L = lines[i];
     if (!L.trim()) { i++; continue; }
-    if (/^---+$/.test(L.trim())) { out.push('<hr/>'); i++; continue; }
+    if (/^---+$/.test(L.trim())) { out.push(`<hr style="${CONTENT_HR_STYLE}"/>`); i++; continue; }
     const h = L.match(/^(#{1,4})\s+(.+)/);
-    if (h) { out.push(`<h${h[1].length}>${renderInline(h[2])}</h${h[1].length}>`); i++; continue; }
+    if (h) {
+      const style = h[1].length === 2 ? CONTENT_H2_STYLE : h[1].length === 3 ? CONTENT_H3_STYLE : `font-size:22px;font-weight:600;margin-top:1.5em;`;
+      out.push(`<h${h[1].length} style="${style}">${renderInline(h[2])}</h${h[1].length}>`);
+      i++; continue;
+    }
     if (L.startsWith('```')) {
       const lang = L.slice(3).trim(); i++;
       const buf = [];
       while (i < lines.length && !lines[i].startsWith('```')) { buf.push(lines[i]); i++; }
       i++;
-      const cls = lang ? ` class="lang-${escapeHtml(lang)}"` : '';
-      out.push(`<pre><code${cls}>${escapeHtml(buf.join('\n'))}</code></pre>`);
+      const langAttr = lang ? ` class="lang-${escapeHtml(lang)}"` : '';
+      out.push(`<pre style="${CONTENT_PRE_STYLE}"><code${langAttr}>${escapeHtml(buf.join('\n'))}</code></pre>`);
       continue;
     }
     if (L.startsWith('> ')) {
       const buf = [];
       while (i < lines.length && lines[i].startsWith('> ')) { buf.push(lines[i].slice(2)); i++; }
-      out.push(`<blockquote>${renderInline(buf.join(' '))}</blockquote>`);
+      out.push(`<blockquote style="${CONTENT_BQ_STYLE}">${renderInline(buf.join(' '))}</blockquote>`);
       continue;
     }
     if (/^[-*]\s+/.test(L)) {
       const buf = [];
       while (i < lines.length && /^[-*]\s+/.test(lines[i])) {
-        buf.push(`<li>${renderInline(lines[i].replace(/^[-*]\s+/, ''))}</li>`);
+        buf.push(`<li style="${CONTENT_LI_STYLE}">${renderInline(lines[i].replace(/^[-*]\s+/, ''))}</li>`);
         i++;
       }
-      out.push(`<ul>${buf.join('')}</ul>`);
+      out.push(`<ul style="${CONTENT_UL_STYLE}">${buf.join('')}</ul>`);
       continue;
     }
     if (/^\d+\.\s+/.test(L)) {
       const buf = [];
       while (i < lines.length && /^\d+\.\s+/.test(lines[i])) {
-        buf.push(`<li>${renderInline(lines[i].replace(/^\d+\.\s+/, ''))}</li>`);
+        buf.push(`<li style="${CONTENT_LI_STYLE}">${renderInline(lines[i].replace(/^\d+\.\s+/, ''))}</li>`);
         i++;
       }
-      out.push(`<ol>${buf.join('')}</ol>`);
+      out.push(`<ol style="${CONTENT_OL_STYLE}">${buf.join('')}</ol>`);
       continue;
     }
     const buf = [];
@@ -110,7 +187,7 @@ function renderMarkdown(md) {
       !/^(#{1,4}\s|>|```|[-*]\s|\d+\.\s|---+$)/.test(lines[i])) {
       buf.push(lines[i]); i++;
     }
-    out.push(`<p>${renderInline(buf.join(' '))}</p>`);
+    out.push(`<p style="${CONTENT_P_STYLE}">${renderInline(buf.join(' '))}</p>`);
   }
   return out.join('\n');
 }
@@ -126,11 +203,71 @@ function readingTime(md) {
   return `${Math.max(1, Math.round(words / 220))} min read`;
 }
 
-const STYLE_TAG = (css) => `<style>${css}</style>`;
+function renderCard(e) {
+  const tags = (e.tags && e.tags.length)
+    ? `<div style="${CARD_TAGS_STYLE}">${e.tags.map(t => `<span style="${CARD_TAG_STYLE}">${escapeHtml(t)}</span>`).join('')}</div>`
+    : '';
+  return `
+      <a class="essay-card" href="/essays/${e.slug}/" style="${CARD_STYLE}">
+        <div style="${CARD_META_STYLE}">
+          <time datetime="${escapeHtml(e.date)}">${escapeHtml(formatDate(e.date))}</time>
+          <span style="${CARD_DOT_STYLE}"></span>
+          <span>${escapeHtml(readingTime(e.body || ''))}</span>
+        </div>
+        <h2 style="${CARD_H2_STYLE}">${escapeHtml(e.title)}</h2>
+        <p style="${CARD_P_STYLE}">${escapeHtml(e.excerpt || '')}</p>
+        ${tags}
+      </a>`;
+}
+
+function sharedHeader() {
+  return `
+  <header style="${HEADER_STYLE}">
+    <div style="${HEADER_WRAP_STYLE}">
+      <a href="/" style="${BRAND_STYLE}">
+        <span style="${BRAND_MARK_STYLE}">e.</span>
+        <span>Essays</span>
+      </a>
+      <nav style="${NAV_STYLE}">
+        <a href="/" style="${NAV_LINK_STYLE}">Essays</a>
+        <a href="/about.html" style="${NAV_LINK_STYLE}">About</a>
+      </nav>
+    </div>
+  </header>`;
+}
+
+function sharedFooter() {
+  return `
+  <footer style="${FOOTER_STYLE}">
+    <div style="${FOOTER_WRAP_STYLE}">
+      <p style="margin:0;">© <span id="year"></span> · <a href="/feed.xml" style="${FOOTER_LINK_STYLE}">RSS</a></p>
+    </div>
+  </footer>`;
+}
+
+function pageHead(title, description) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${escapeHtml(title)}</title>
+  <meta name="description" content="${escapeHtml(description)}" />
+  <style>${RESET_STYLE}
+${MOBILE_BODY}</style>
+  <link rel="alternate" type="application/rss+xml" title="Essays" href="/feed.xml" />
+</head>
+<body style="${BODY_STYLE}">`;
+}
+
+function pageTail() {
+  return `
+  <script src="/assets/main.js"></script>
+</body>
+</html>`;
+}
 
 (async () => {
-  const css = await fs.readFile(CSS_PATH, 'utf8');
-
   const files = (await fs.readdir(ESSAYS_DIR)).filter(f => f.endsWith('.md'));
   const essays = [];
   for (const f of files) {
@@ -170,53 +307,81 @@ ${items}
 `;
   await fs.writeFile(OUT_FEED, feed);
 
-  // 3) Per-essay pages at /essays/<slug>/index.html
-  const tpl = await fs.readFile(POST_TEMPLATE, 'utf8');
+  // 3) Per-essay pages
   for (let i = 0; i < essays.length; i++) {
     const e = essays[i];
     const prev = i > 0 ? essays[i - 1] : null;
     const next = i < essays.length - 1 ? essays[i + 1] : null;
-    const html = renderMarkdown(e.body || '');
-    const htmlOut = tpl
-      .replace(/\{\{STYLE\}\}/g, STYLE_TAG(css))
-      .replace(/\{\{TITLE\}\}/g, escapeHtml(e.title))
-      .replace(/\{\{DATE_ISO\}\}/g, escapeHtml(e.date))
-      .replace(/\{\{DATE_FMT\}\}/g, escapeHtml(formatDate(e.date)))
-      .replace(/\{\{READING_TIME\}\}/g, escapeHtml(readingTime(e.body || '')))
-      .replace(/\{\{BODY_HTML\}\}/g, html)
-      .replace(/\{\{PREV_LINK\}\}/g, prev ? `<a href="/essays/${prev.slug}/">← <span class="title">${escapeHtml(prev.title)}</span></a>` : `<span class="empty"></span>`)
-      .replace(/\{\{NEXT_LINK\}\}/g, next ? `<a class="next" href="/essays/${next.slug}/"><span class="title">${escapeHtml(next.title)}</span> →</a>` : `<span class="empty"></span>`);
-    const outDir = path.join(ESSAYS_DIR, e.slug);
-    await fs.mkdir(outDir, { recursive: true });
-    await fs.writeFile(path.join(outDir, 'index.html'), htmlOut);
-  }
+    const bodyHtml = renderMarkdown(e.body || '');
+    const prevLink = prev
+      ? `<a href="/essays/${prev.slug}/" style="display:flex;flex-direction:column;padding:16px 20px;border-radius:12px;border:1px solid #e3e0d6;background:#ffffff;font-size:14px;color:#1a1a1a;"><span style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#8a8a86;margin-bottom:4px;font-weight:600;${SANS_STYLE}">Previous</span><span style="font-family:Georgia,'Times New Roman',serif;font-size:16px;font-weight:500;">← ${escapeHtml(prev.title)}</span></a>`
+      : `<span class="empty"></span>`;
+    const nextLink = next
+      ? `<a class="next" href="/essays/${next.slug}/" style="display:flex;flex-direction:column;padding:16px 20px;border-radius:12px;border:1px solid #e3e0d6;background:#ffffff;font-size:14px;text-align:right;align-items:flex-end;color:#1a1a1a;"><span style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#8a8a86;margin-bottom:4px;font-weight:600;${SANS_STYLE}">Next</span><span style="font-family:Georgia,'Times New Roman',serif;font-size:16px;font-weight:500;">${escapeHtml(next.title)} →</span></a>`
+      : `<span class="empty"></span>`;
 
-  // 4) Inline cards into index.html
-  const cards = essays.map(e => `
-      <a class="essay-card" href="/essays/${e.slug}/">
-        <div class="essay-meta">
+    const page = `${pageHead(`${e.title} — Essays`, e.title)}
+  <div style="position:absolute;left:-9999px;top:0;background:#c2410c;color:white;padding:8px 12px;">Skip to content</div>
+  ${sharedHeader()}
+  <main style="${MAIN_STYLE}${WRAP_STYLE}">
+    <article>
+      <header style="${POST_HEADER_STYLE}">
+        <h1 style="${POST_H1_STYLE}">${escapeHtml(e.title)}</h1>
+        <div style="${POST_META_STYLE}">
           <time datetime="${escapeHtml(e.date)}">${escapeHtml(formatDate(e.date))}</time>
-          <span class="dot"></span>
+          <span style="${CARD_DOT_STYLE}"></span>
           <span>${escapeHtml(readingTime(e.body || ''))}</span>
         </div>
-        <h2>${escapeHtml(e.title)}</h2>
-        <p>${escapeHtml(e.excerpt || '')}</p>
-        ${e.tags && e.tags.length ? `<div class="essay-tags">${e.tags.map(t => `<span class="essay-tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
-      </a>`).join('\n');
+      </header>
+      <div style="${CONTENT_STYLE}">${bodyHtml}</div>
+      <nav class="post-nav" style="margin-top:72px;padding-top:32px;border-top:1px solid #e3e0d6;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        ${prevLink}
+        ${nextLink}
+      </nav>
+    </article>
+  </main>
+  ${sharedFooter()}${pageTail()}`;
 
+    const outDir = path.join(ESSAYS_DIR, e.slug);
+    await fs.mkdir(outDir, { recursive: true });
+    await fs.writeFile(path.join(outDir, 'index.html'), page);
+  }
+
+  // 4) Index page
   const idx = await fs.readFile(INDEX_PATH, 'utf8');
-  const updated = idx
-    .replace(/\{\{STYLE\}\}/g, STYLE_TAG(css))
-    .replace(/\{\{CARDS\}\}/g, cards);
+  const cards = essays.map(renderCard).join('\n');
+  const updated = idx.replace(/\{\{CARDS\}\}/g, cards);
   await fs.writeFile(INDEX_PATH, updated);
 
-  // 5) Inline CSS into about + 404 too
-  for (const filePath of [ABOUT_PATH, NOTFOUND_PATH]) {
-    const html = await fs.readFile(filePath, 'utf8');
-    if (html.includes('{{STYLE}}')) {
-      await fs.writeFile(filePath, html.replace(/\{\{STYLE\}\}/g, STYLE_TAG(css)));
-    }
-  }
+  // 5) About / 404: rebuild with current style template
+  const aboutPage = `${pageHead('About — Essays', 'About these essays.')}
+  <div style="position:absolute;left:-9999px;top:0;background:#c2410c;color:white;padding:8px 12px;">Skip to content</div>
+  ${sharedHeader()}
+  <main style="${MAIN_STYLE}${WRAP_STYLE}">
+    <section style="${HERO_STYLE}">
+      <span style="${EYEBROW_STYLE}">About</span>
+      <h1 style="${H1_STYLE}">A quiet place on the internet.</h1>
+    </section>
+    <div style="${CONTENT_STYLE}">
+      <p style="${CONTENT_P_STYLE}">These are short essays — written slowly, edited more than written. Some are about software. Some are about language. Most are about the small, persistent questions that don't quite have answers.</p>
+      <p style="${CONTENT_P_STYLE}">You can subscribe via <a href="/feed.xml" style="${CONTENT_A_STYLE}">RSS</a>. New essays land here when they're ready, not on a schedule.</p>
+    </div>
+  </main>
+  ${sharedFooter()}${pageTail()}`;
+  await fs.writeFile(ABOUT_PATH, aboutPage);
+
+  const notFoundPage = `${pageHead('Not found — Essays', 'Page not found.')}
+  <div style="position:absolute;left:-9999px;top:0;background:#c2410c;color:white;padding:8px 12px;">Skip to content</div>
+  ${sharedHeader()}
+  <main style="${MAIN_STYLE}${WRAP_STYLE}">
+    <section style="${HERO_STYLE}">
+      <span style="${EYEBROW_STYLE}">404</span>
+      <h1 style="${H1_STYLE}">Not found.</h1>
+      <p style="${LEDE_STYLE}">That page doesn't exist. Try the <a href="/" style="${CONTENT_A_STYLE}">homepage</a> or the <a href="/feed.xml" style="${CONTENT_A_STYLE}">RSS feed</a>.</p>
+    </section>
+  </main>
+  ${sharedFooter()}${pageTail()}`;
+  await fs.writeFile(NOTFOUND_PATH, notFoundPage);
 
   console.log(`Built ${essays.length} essay(s):`);
   for (const e of essays) console.log(`  - ${e.date}  ${e.slug}  → /essays/${e.slug}/`);

@@ -5,433 +5,77 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>What We Mean by Helpful — Essays</title>
   <meta name="description" content="What We Mean by Helpful" />
-  <style>/* Inline-friendly CSS — uses only system fonts, no external dependencies.
-   Designed to render correctly even in minimal in-app browsers (e.g. Telegram).
-   The build script will inline this into every page. */
-
-:root {
-  --bg: #f7f5f0;
-  --bg-elev: #ffffff;
-  --bg-soft: #efece4;
-  --fg: #1a1a1a;
-  --fg-muted: #4a4a48;
-  --fg-faint: #8a8a86;
-  --border: #e3e0d6;
-  --border-strong: #c8c5b9;
-  --accent: #c2410c;
-  --accent-hover: #9a3309;
-  --accent-soft: #fce8db;
-  --code-bg: #f3f1ea;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,.04);
-  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.06);
-  --radius: 12px;
-  --radius-sm: 6px;
-  --max: 720px;
-  --serif: ui-serif, Georgia, 'Times New Roman', serif;
-  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-}
-
-[data-theme="dark"] {
-  --bg: #0f0f0e;
-  --bg-elev: #18181a;
-  --bg-soft: #20201e;
-  --fg: #f0efea;
-  --fg-muted: #a9a8a3;
-  --fg-faint: #6a6a66;
-  --border: #2a2a28;
-  --border-strong: #40403c;
-  --accent: #fb923c;
-  --accent-hover: #fdba74;
-  --accent-soft: #2a1810;
-  --code-bg: #1c1c1a;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
-  --shadow: 0 1px 3px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
-}
-
-*, *::before, *::after { box-sizing: border-box; }
+  <style>*, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body, h1, h2, h3, h4, p, ul, ol, figure, blockquote, pre, hr { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
-
-body {
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--fg);
-  line-height: 1.65;
-  font-size: 17px;
-  -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.wrap {
-  max-width: var(--max);
-  margin: 0 auto;
-  padding: 0 24px;
-}
-
-.skip-link {
-  position: absolute; left: -9999px; top: 0;
-  background: var(--accent); color: white; padding: 8px 12px;
-}
-.skip-link:focus { left: 0; z-index: 100; }
-
-/* HEADER */
-.site-header {
-  border-bottom: 1px solid var(--border);
-  background: var(--bg);
-  position: sticky; top: 0; z-index: 50;
-}
-.site-header .wrap {
-  display: flex; align-items: center; justify-content: space-between;
-  padding-top: 18px; padding-bottom: 18px;
-}
-.brand {
-  display: inline-flex; align-items: baseline; gap: 8px;
-  font-family: var(--serif);
-  font-weight: 600; font-size: 22px;
-  letter-spacing: -0.02em;
-  color: var(--fg);
-}
-.brand-mark {
-  color: var(--accent);
-  font-weight: 700;
-}
-.brand-name { color: var(--fg); }
-.nav { display: flex; align-items: center; gap: 24px; font-size: 15px; }
-.nav a {
-  color: var(--fg-muted);
-  font-weight: 500;
-  transition: color .15s ease;
-}
-.nav a:hover { color: var(--fg); }
-.theme-toggle {
-  background: transparent;
-  border: 1px solid var(--border);
-  width: 36px; height: 36px; border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
-  cursor: pointer; color: var(--fg-muted);
-}
-.theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
-.icon-sun { display: none; }
-[data-theme="dark"] .icon-sun { display: block; }
-[data-theme="dark"] .icon-moon { display: none; }
-
-/* HERO */
-main { flex: 1; padding-top: 80px; padding-bottom: 96px; }
-.hero { margin-bottom: 80px; }
-.eyebrow {
-  display: inline-block;
-  font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 18px;
-  font-weight: 600;
-  padding: 4px 12px;
-  background: var(--accent-soft);
-  border-radius: 999px;
-}
-.hero h1 {
-  font-family: var(--serif);
-  font-size: clamp(36px, 6.5vw, 56px);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1.08;
-  margin-bottom: 20px;
-  color: var(--fg);
-}
-.lede {
-  color: var(--fg-muted);
-  font-size: 19px;
-  max-width: 560px;
-  line-height: 1.55;
-}
-
-/* ESSAY LIST */
-.essays { display: flex; flex-direction: column; }
-.essay-card {
-  display: block;
-  padding: 28px;
-  margin: 0 -28px;
-  border-radius: var(--radius);
-  border: 1px solid transparent;
-  transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
-}
-.essay-card:hover {
-  background: var(--bg-elev);
-  border-color: var(--border);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-}
-.essay-meta {
-  display: flex; gap: 10px; align-items: center;
-  font-size: 13px; color: var(--fg-faint);
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 500;
-}
-.essay-meta .dot {
-  width: 3px; height: 3px;
-  background: var(--fg-faint);
-  border-radius: 50%;
-  display: inline-block;
-}
-.essay-card h2 {
-  font-family: var(--serif);
-  font-size: 28px;
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.2;
-  margin-bottom: 10px;
-  color: var(--fg);
-}
-.essay-card p {
-  color: var(--fg-muted);
-  font-size: 16px;
-  max-width: 580px;
-  line-height: 1.55;
-  margin-top: 6px;
-}
-.essay-tags { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
-.essay-tag {
-  font-size: 12px;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: var(--bg-soft);
-  color: var(--fg-muted);
-  font-weight: 500;
-  border: 1px solid var(--border);
-}
-
-/* ESSAY (post) PAGE */
-.post-header {
-  margin-bottom: 48px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--border);
-}
-.post-header h1 {
-  font-family: var(--serif);
-  font-size: clamp(34px, 5.5vw, 48px);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-  margin-bottom: 16px;
-  color: var(--fg);
-}
-.post-meta {
-  color: var(--fg-faint);
-  font-size: 14px;
-  display: flex; gap: 10px; align-items: center;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 500;
-}
-.post-meta .dot {
-  width: 3px; height: 3px;
-  background: var(--fg-faint);
-  border-radius: 50%;
-  display: inline-block;
-}
-.post-content { font-size: 18px; line-height: 1.78; }
-.post-content > * + * { margin-top: 1.3em; }
-.post-content h2 {
-  font-family: var(--serif);
-  font-size: 30px; font-weight: 600; letter-spacing: -0.022em;
-  margin-top: 2.2em;
-  line-height: 1.2;
-}
-.post-content h3 {
-  font-family: var(--serif);
-  font-size: 23px; font-weight: 600; letter-spacing: -0.015em;
-  margin-top: 1.7em;
-}
-.post-content p, .post-content li { color: var(--fg); }
-.post-content a {
-  color: var(--accent);
-  border-bottom: 1.5px solid rgba(194, 65, 12, 0.35);
-  transition: border-color .15s ease;
-}
-.post-content a:hover { border-bottom-color: var(--accent); }
-.post-content blockquote {
-  border-left: 3px solid var(--accent);
-  padding: 4px 0 4px 24px;
-  font-style: italic;
-  color: var(--fg-muted);
-  font-family: var(--serif);
-  font-size: 19px;
-}
-.post-content code {
-  font-family: var(--mono);
-  font-size: 0.86em;
-  background: var(--code-bg);
-  padding: 2px 7px;
-  border-radius: 4px;
-  color: var(--accent);
-  font-weight: 500;
-}
-.post-content pre {
-  font-family: var(--mono);
-  background: var(--code-bg);
-  padding: 18px 22px;
-  border-radius: var(--radius);
-  overflow-x: auto;
-  font-size: 14px;
-  line-height: 1.6;
-  border: 1px solid var(--border);
-}
-.post-content pre code {
-  background: transparent;
-  padding: 0;
-  color: var(--fg);
-  font-weight: 400;
-}
-.post-content ul, .post-content ol { padding-left: 1.6em; }
-.post-content ul li { list-style: disc; }
-.post-content ol li { list-style: decimal; }
-.post-content hr {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: 2.5em auto;
-  width: 60px;
-}
-
-.post-nav {
-  margin-top: 72px;
-  padding-top: 32px;
-  border-top: 1px solid var(--border);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-.post-nav a {
-  display: flex;
-  flex-direction: column;
-  padding: 16px 20px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  background: var(--bg-elev);
-  font-size: 14px;
-  transition: all .15s ease;
-}
-.post-nav a:hover {
-  border-color: var(--accent);
-  transform: translateY(-1px);
-}
-.post-nav a.next { text-align: right; align-items: flex-end; }
-.post-nav .label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--fg-faint);
-  margin-bottom: 4px;
-  font-weight: 600;
-}
-.post-nav .title {
-  color: var(--fg);
-  font-family: var(--serif);
-  font-size: 16px;
-  font-weight: 500;
-}
-.post-nav .empty { display: block; }
-
-/* ABOUT */
-.about-content { font-size: 18px; line-height: 1.78; }
-.about-content > * + * { margin-top: 1em; }
-.about-content p { color: var(--fg); }
-
-/* FOOTER */
-.site-footer {
-  border-top: 1px solid var(--border);
-  padding: 32px 0;
-  color: var(--fg-faint);
-  font-size: 14px;
-}
-.site-footer .wrap {
-  display: flex; justify-content: space-between; align-items: center;
-  flex-wrap: wrap; gap: 12px;
-}
-.site-footer a { color: var(--fg-muted); }
-.site-footer a:hover { color: var(--accent); }
-
-/* RESPONSIVE */
-@media (max-width: 600px) {
-  body { font-size: 16px; }
-  main { padding-top: 48px; padding-bottom: 64px; }
-  .hero { margin-bottom: 48px; }
-  .nav { gap: 16px; }
-  .essay-card { padding: 22px 20px; margin: 0 -20px; }
-  .essay-card h2 { font-size: 22px; }
-  .post-nav { grid-template-columns: 1fr; }
-  .post-nav a.next { text-align: left; align-items: flex-start; }
-  .site-header .wrap { padding-top: 14px; padding-bottom: 14px; }
-  .brand { font-size: 19px; }
-  .hero h1 { font-size: 36px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-  }
-}
-
-::selection { background: var(--accent); color: white; }
-</style>
+@media (max-width:600px) {
+  body { font-size:16px; }
+  main { padding-top:48px !important; padding-bottom:64px !important; }
+  section[style*="margin-bottom:80px"] { margin-bottom:48px !important; }
+  .essay-card { padding:22px 20px !important; margin:0 -20px !important; }
+  .essay-card h2 { font-size:22px !important; }
+  h1 { font-size:36px !important; }
+  .post-nav { grid-template-columns:1fr !important; }
+  .post-nav a.next { text-align:left !important; align-items:flex-start !important; }
+  header > div { padding-top:14px !important; padding-bottom:14px !important; }
+  .brand { font-size:19px !important; }
+  nav { gap:16px !important; }
+}</style>
+  <link rel="alternate" type="application/rss+xml" title="Essays" href="/feed.xml" />
 </head>
-<body>
-  <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header">
-    <div class="wrap">
-      <a class="brand" href="/"><span class="brand-mark">e.</span><span class="brand-name">Essays</span></a>
-      <nav class="nav">
-        <a href="/">Essays</a>
-        <a href="/about.html">About</a>
-        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
-          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        </button>
+<body style="margin:0;font-family:Georgia,'Times New Roman',serif;background:#f7f5f0;color:#1a1a1a;line-height:1.7;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;">
+  <div style="position:absolute;left:-9999px;top:0;background:#c2410c;color:white;padding:8px 12px;">Skip to content</div>
+  
+  <header style="border-bottom:1px solid #e3e0d6;background:#f7f5f0;position:sticky;top:0;z-index:50;">
+    <div style="max-width:720px;margin:0 auto;padding:0 24px;width:100%;padding-top:18px;padding-bottom:18px;display:flex;align-items:center;justify-content:space-between;">
+      <a href="/" style="display:inline-flex;align-items:baseline;gap:8px;font-weight:600;font-size:22px;letter-spacing:-0.02em;color:#1a1a1a;">
+        <span style="color:#c2410c;font-weight:700;">e.</span>
+        <span>Essays</span>
+      </a>
+      <nav style="display:flex;align-items:center;gap:24px;font-size:15px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+        <a href="/" style="color:#4a4a48;font-weight:500;">Essays</a>
+        <a href="/about.html" style="color:#4a4a48;font-weight:500;">About</a>
       </nav>
     </div>
   </header>
-
-  <main id="main" class="wrap">
+  <main style="flex:1;padding:80px 24px 96px;max-width:720px;margin:0 auto;padding:0 24px;width:100%;">
     <article>
-      <header class="post-header">
-        <h1>What We Mean by Helpful</h1>
-        <div class="post-meta">
+      <header style="margin-bottom:48px;padding-bottom:24px;border-bottom:1px solid #e3e0d6;">
+        <h1 style="font-size:46px;font-weight:600;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;color:#1a1a1a;">What We Mean by Helpful</h1>
+        <div style="color:#8a8a86;font-size:14px;display:flex;gap:10px;align-items:center;text-transform:uppercase;letter-spacing:0.06em;font-weight:500;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
           <time datetime="2026-07-29">July 29, 2026</time>
-          <span class="dot"></span>
+          <span style="width:3px;height:3px;background:#8a8a86;border-radius:50%;display:inline-block;"></span>
           <span>2 min read</span>
         </div>
       </header>
-      <div class="post-content"><p>A camera that &quot;helps&quot; by smoothing your face is less helpful than a camera that shows you your face. A map that &quot;helps&quot; by hiding streets you don&#39;t need is less helpful than a map that shows you the streets.</p>
-<p>The word <em>helpful</em> gets used as a synonym for <em>opinionated</em>. They are not the same thing.</p>
-<h2>The shape of over-helpful</h2>
-<p>Over-helpful tools have a tell: they add steps you didn&#39;t ask for.</p>
-<ul><li>&quot;Would you like me to also...&quot;</li><li>&quot;I noticed you might want to...&quot;</li><li>&quot;Here&#39;s a summary of what we discussed...&quot;</li></ul>
-<p>Each of these is a small interruption. Each one is a guess the tool made about what you wanted. Sometimes the guess is right. Most of the time, you have to read past the guess to get back to what you were doing. The tool has inserted itself between you and your work.</p>
-<h2>What restraint looks like</h2>
-<p>A helpful tool is one that does the thing you asked, then stops. If you ask for a sentence, it gives you a sentence. If you ask for an essay, it gives you an essay. The tool does not decide for you whether your sentence is too short, or whether your essay is too long.</p>
-<p>Restraint is not absence. A good tool has strong defaults. A good tool makes the obvious thing easy. But a good tool does not <em>guess</em> at the non-obvious things and then act on those guesses as if they were instructions.</p>
-<h2>A simple test</h2>
-<p>When you finish using a tool, do you feel you did the work, or do you feel the tool did it?</p>
-<p>That&#39;s the test. Not &quot;did the tool give me a good answer?&quot; — that&#39;s a different question, and a smaller one. The question is about ownership. Did you walk away with something you made, or with something that was made for you?</p>
-<p>The tools I trust most are the ones that leave me with my hands still on the wheel.</p></div>
-      <nav class="post-nav">
-        <a href="/essays/the-quiet-stack/">← <span class="title">The Quiet Stack</span></a>
+      <div style="font-size:18px;line-height:1.78;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;"><p style="color:#1a1a1a;margin-top:1.3em;">A camera that &quot;helps&quot; by smoothing your face is less helpful than a camera that shows you your face. A map that &quot;helps&quot; by hiding streets you don&#39;t need is less helpful than a map that shows you the streets.</p>
+<p style="color:#1a1a1a;margin-top:1.3em;">The word <em>helpful</em> gets used as a synonym for <em>opinionated</em>. They are not the same thing.</p>
+<h2 style="font-family:Georgia,'Times New Roman',serif;font-size:30px;font-weight:600;letter-spacing:-0.022em;margin-top:2.2em;line-height:1.2;">The shape of over-helpful</h2>
+<p style="color:#1a1a1a;margin-top:1.3em;">Over-helpful tools have a tell: they add steps you didn&#39;t ask for.</p>
+<ul style="padding-left:1.6em;margin-top:1.3em;"><li style="color:#1a1a1a;margin-top:0.5em;">&quot;Would you like me to also...&quot;</li><li style="color:#1a1a1a;margin-top:0.5em;">&quot;I noticed you might want to...&quot;</li><li style="color:#1a1a1a;margin-top:0.5em;">&quot;Here&#39;s a summary of what we discussed...&quot;</li></ul>
+<p style="color:#1a1a1a;margin-top:1.3em;">Each of these is a small interruption. Each one is a guess the tool made about what you wanted. Sometimes the guess is right. Most of the time, you have to read past the guess to get back to what you were doing. The tool has inserted itself between you and your work.</p>
+<h2 style="font-family:Georgia,'Times New Roman',serif;font-size:30px;font-weight:600;letter-spacing:-0.022em;margin-top:2.2em;line-height:1.2;">What restraint looks like</h2>
+<p style="color:#1a1a1a;margin-top:1.3em;">A helpful tool is one that does the thing you asked, then stops. If you ask for a sentence, it gives you a sentence. If you ask for an essay, it gives you an essay. The tool does not decide for you whether your sentence is too short, or whether your essay is too long.</p>
+<p style="color:#1a1a1a;margin-top:1.3em;">Restraint is not absence. A good tool has strong defaults. A good tool makes the obvious thing easy. But a good tool does not <em>guess</em> at the non-obvious things and then act on those guesses as if they were instructions.</p>
+<h2 style="font-family:Georgia,'Times New Roman',serif;font-size:30px;font-weight:600;letter-spacing:-0.022em;margin-top:2.2em;line-height:1.2;">A simple test</h2>
+<p style="color:#1a1a1a;margin-top:1.3em;">When you finish using a tool, do you feel you did the work, or do you feel the tool did it?</p>
+<p style="color:#1a1a1a;margin-top:1.3em;">That&#39;s the test. Not &quot;did the tool give me a good answer?&quot; — that&#39;s a different question, and a smaller one. The question is about ownership. Did you walk away with something you made, or with something that was made for you?</p>
+<p style="color:#1a1a1a;margin-top:1.3em;">The tools I trust most are the ones that leave me with my hands still on the wheel.</p></div>
+      <nav class="post-nav" style="margin-top:72px;padding-top:32px;border-top:1px solid #e3e0d6;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <a href="/essays/the-quiet-stack/" style="display:flex;flex-direction:column;padding:16px 20px;border-radius:12px;border:1px solid #e3e0d6;background:#ffffff;font-size:14px;color:#1a1a1a;"><span style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#8a8a86;margin-bottom:4px;font-weight:600;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">Previous</span><span style="font-family:Georgia,'Times New Roman',serif;font-size:16px;font-weight:500;">← The Quiet Stack</span></a>
         <span class="empty"></span>
       </nav>
     </article>
   </main>
-
-  <footer class="site-footer">
-    <div class="wrap"><p>© <span id="year"></span> · <a href="/feed.xml">RSS</a></p></div>
+  
+  <footer style="border-top:1px solid #e3e0d6;padding:32px 24px;color:#8a8a86;font-size:14px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+    <div style="max-width:720px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <p style="margin:0;">© <span id="year"></span> · <a href="/feed.xml" style="color:#4a4a48;">RSS</a></p>
+    </div>
   </footer>
-
   <script src="/assets/main.js"></script>
 </body>
 </html>
